@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uptime Monitor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="container mx-auto p-8">
+    <h1 class="text-3xl font-bold mb-8 text-blue-500">Uptime Monitor</h1>
+
+    <!-- Button to add new website -->
+    <button id="addWebsiteBtn" class="bg-blue-500 text-white px-4 py-2 rounded mb-8">Add New Website</button>
+
+    <!-- Form to add new website (initially hidden) -->
+    <div id="addWebsiteForm" class="hidden mb-8 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Add New Website</h2>
+        <form id="monitorForm" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+                <label for="url" class="block text-sm font-medium text-gray-600">Website URL</label>
+                <input type="url" id="url" name="url" required
+                       class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-600">Your Name</label>
+                <input type="text" id="name" name="name" required
+                       class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-600">Your Email</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 p-2 w-full border rounded focus:outline-none focus:ring focus:border-blue-300">
+            </div>
+            <div class="col-span-2">
+                <button type="button" id="send"
+                        class="bg-blue-500 text-white px-4 py-2 rounded focus:outline-none hover:bg-blue-600">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table to display monitored websites -->
+   <!-- Add this HTML in your existing HTML file -->
+<table class="min-w-full border border-gray-200">
+    <thead>
+        <tr>
+            <th class="py-2 px-4 border-b">Name</th>
+            <th class="py-2 px-4 border-b">URL</th>
+            <th class="py-2 px-4 border-b">Status</th>
+            <th class="py-2 px-4 border-b">Last Checked</th>
+        </tr>
+    </thead>
+    <tbody id="websitesTableBody">
+        <!-- Table rows will be dynamically added here by JavaScript -->
+    </tbody>
+</table>
+
+</div>
+
+<script src="app.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sendButton = document.getElementById('send');
+
+        if (sendButton) {
+            sendButton.addEventListener('click', async () => {
+                const urlInput = document.getElementById('url');
+                const nameInput = document.getElementById('name');
+                const emailInput = document.getElementById('email');
+
+                const url = urlInput.value;
+                const name = nameInput.value;
+                const email = emailInput.value;
+
+                // Reset the form
+                document.getElementById('monitorForm').reset();
+                document.getElementById('addWebsiteForm').classList.add('hidden');
+
+                try {
+                    // Send data to the backend API
+                    const response = await fetch('http://localhost:3000/addWebsite', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ url, name, email }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to add website');
+                    }
+
+                    const data = await response.json();
+                    console.log('Website added:', data);
+
+                    // Fetch and display monitored websites after adding a new one
+                    fetchMonitoredWebsites();
+                } catch (error) {
+                    console.error('Error adding website:', error);
+                }
+            });
+        } else {
+            console.error('Button not found');
+        }
+
+        // Fetch and display monitored websites
+        function fetchMonitoredWebsites() {
+            // Replace this with your logic to fetch and update the website data
+            console.log('Fetching monitored websites...');
+        }
+    });
+</script>
+</body>
+</html>
